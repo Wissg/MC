@@ -1,0 +1,114 @@
+disp("Exo 4: Partiel 2021/2022");
+%question4_Cas1();
+question4_Cas2();
+function [] = question4_Cas1() 
+ T = 0.5; 
+ r = 0.12; 
+ sa0 = 100; 
+ sb0 = 75; 
+ na = 110; 
+ nb = 100; 
+ sigmaa = 0.2; 
+ sigmab = 0.3; 
+ Sa(1) = sa0; 
+ Sb(1) = sb0; 
+ W(1) = 0; 
+ N = 100; 
+ delta_t = T / N; 
+ delta_ta = T / na; 
+ delta_tb = T / nb;
+ p0 = na * sa0 + nb * sb0; 
+ ta = (0:na) * delta_ta; 
+ tb =(0:nb) * delta_tb; 
+ P(1) = p0; 
+ %P = 0; 
+ cpt = 0; 
+ proba = 0; 
+ Nmc=1000; 
+ for k = 1:Nmc 
+     for i = 1:na 
+        W(i + 1) = W(i) + sqrt(delta_ta) * randn;  
+        Sa(i + 1) = Sa(i)*(1 + r * delta_ta + sigmaa *  (W(i + 1) - W(i))); 
+     end 
+     for i = 1:nb 
+        W(i + 1) = W(i) + sqrt(delta_tb) * randn;  
+        Sb(i + 1) = Sb(i)*(1 + r * delta_tb + sigmab *  (W(i + 1) - W(i))); 
+     end 
+     P(k) = na * Sa(N + 1) + nb * Sb(N + 1); 
+     if ((P(k) / P(1)) < 0.9)  
+        cpt = cpt + 1; 
+     end 
+% plot(ta, Sa); 
+% hold on; 
+% plot(tb, Sb); 
+% hold on; 
+%plot( P); 
+%hold on; 
+ end 
+ proba = cpt / Nmc; % calcule la proba en comptent le nombre d'iteration tels que P(k) /P0 < 0.5 et on divise par Nmc pour avoir la proba 
+ disp("proba [PT/P0<0.9] = " + proba); % affiche la proba 
+ disp(" Esperance = " + mean(P)); 
+end
+
+function [] = question4_Cas2() 
+ T = 0.5; 
+ r = 0.12; 
+ sa0 = 100; 
+ sb0 = 75; 
+ na = 110; 
+ nb = 100; 
+ sigmaa = 0.2; 
+ sigmab = 0.3; 
+ Sa(1) = sa0; 
+ Sb(1) = sb0; 
+ W(1) = 0; 
+ N = 100; 
+ delta_t = T / N; 
+ delta_ta = T / na; 
+ delta_tb = T / nb;
+ p0 = na * sa0 + nb * sb0; 
+ ta = (0:na) * delta_ta; 
+ tb =(0:nb) * delta_tb; 
+ P(1) = p0; 
+ %P = 0; 
+ 
+ proba = 0; 
+ Nmc=1000; 
+ p=-1;
+ for j =1:200
+      cpt = 0;
+     for k = 1:Nmc 
+
+         for i = 1:na 
+            W(i + 1) = W(i) + sqrt(delta_ta) * randn;  
+            Sa(i + 1) = Sa(i)*(1 + r * delta_ta + sigmaa *  (W(i + 1) - W(i))); 
+         end 
+         for i = 1:nb 
+            W(i + 1) = W(i) + sqrt(delta_tb) * randn;
+            W(i+1)=p*W(i)+ sqrt(1-p*p)*W(i)*W(i);
+            Sb(i + 1) = Sb(i)*(1 + r * delta_tb + sigmab *  (W(i + 1) - W(i))); 
+         end 
+         P(k) = na * Sa(N + 1) + nb * Sb(N + 1); 
+         if ((P(k) / P(1)) < 0.9)  
+            cpt = cpt + 1; 
+         end 
+    % plot(ta, Sa); 
+    % hold on; 
+    % plot(tb, Sb); 
+    % hold on; 
+
+    %hold on; 
+     end 
+    
+     tp(j)=cpt / Nmc;% stock la proba pour chaque p 
+     pp(j)=p;% stock le p correspondant 
+     %proba = cpt / Nmc; % calcule la proba en comptent le nombre d'iteration tels que P(k) /P0 < 0.5 et on divise par Nmc pour avoir la proba 
+     p=p+0.01;
+ end
+ disp(pp(1));
+ disp(tp(1));
+plot(pp,tp); % affiche le graphe [PT/P0<0.9] en fonction de p
+ % disp("proba [PT/P0<0.9] = " + proba); % affiche la proba 
+ disp(" esperance = " + mean(P)); 
+end
+
